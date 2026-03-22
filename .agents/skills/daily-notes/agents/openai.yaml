@@ -1,0 +1,7 @@
+interface:
+  display_name: "Daily Notes"
+  short_description: "Clean and structure daily notes"
+  brand_color: "#14B8A6"
+  default_prompt: "Clean up these notes into the daily template."
+policy:
+  allow_implicit_invocation: true
