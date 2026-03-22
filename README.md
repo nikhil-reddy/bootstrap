@@ -21,6 +21,7 @@ This repo includes a minimal set of Codex skills:
 - security-review
 - verification-loop
 - coding-standards
+- daily-notes
 
 Install them to your user profile with:
 ```sh
