@@ -206,6 +206,11 @@ setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt EXTENDED_HISTORY
 
+# Initialize zsh completion system before any completion scripts use compdef
+autoload -U compinit
+mkdir -p ~/.zsh/cache
+compinit -d ~/.zsh/cache/zcompdump
+
 # Completion cache
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
