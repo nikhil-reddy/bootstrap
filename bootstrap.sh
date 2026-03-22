@@ -11,15 +11,17 @@ set -euo pipefail
 #   INSTALL_TFENV=1
 #   CONFIGURE_GIT=1
 #   CONFIGURE_ZSH=1
+#   CONFIGURE_STARSHIP=1
 #   INSTALL_TOOLS=1 (default on)
 
 INSTALL_TOOLS=${INSTALL_TOOLS:-1}
-INSTALL_TERRAFORM=${INSTALL_TERRAFORM:-0}
-INSTALL_STARSHIP=${INSTALL_STARSHIP:-0}
+INSTALL_TERRAFORM=${INSTALL_TERRAFORM:-1}
+INSTALL_STARSHIP=${INSTALL_STARSHIP:-1}
 INSTALL_FONTS=${INSTALL_FONTS:-0}
-INSTALL_TFENV=${INSTALL_TFENV:-0}
+INSTALL_TFENV=${INSTALL_TFENV:-1}
 CONFIGURE_GIT=${CONFIGURE_GIT:-1}
 CONFIGURE_ZSH=${CONFIGURE_ZSH:-1}
+CONFIGURE_STARSHIP=${CONFIGURE_STARSHIP:-1}
 
 BREW_BIN="/opt/homebrew/bin/brew"
 BREW_BIN_INTEL="/usr/local/bin/brew"
@@ -255,6 +257,49 @@ _tfenv_auto_use
 EOF
 }
 
+configure_starship() {
+  local cfg_dir="$HOME/.config"
+  local cfg="$cfg_dir/starship.toml"
+  if [[ -f "$cfg" ]]; then
+    return
+  fi
+  mkdir -p "$cfg_dir"
+  cat > "$cfg" <<'EOF'
+# Minimal Starship prompt config
+add_newline = false
+format = "$username$hostname$directory$git_branch$git_status$character"
+
+[username]
+show_always = true
+style_user = "bold fg:37"
+style_root = "bold fg:160"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = "bold fg:37"
+format = "@[$hostname]($style) "
+
+[directory]
+style = "bold fg:37"
+format = "[$path]($style) "
+truncation_length = 3
+truncate_to_repo = false
+
+[git_branch]
+style = "bold fg:208"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "fg:208"
+format = "[$all_status$ahead_behind]($style) "
+
+[character]
+success_symbol = "[❯](fg:250)"
+error_symbol = "[❯](fg:160)"
+EOF
+}
+
 main() {
   if [[ "$INSTALL_TOOLS" == "1" ]]; then
     if is_macos; then
@@ -273,6 +318,10 @@ main() {
 
   if [[ "$CONFIGURE_ZSH" == "1" ]]; then
     configure_zsh
+  fi
+
+  if [[ "$CONFIGURE_STARSHIP" == "1" ]]; then
+    configure_starship
   fi
 
   log "Done. Restart your shell to pick up zsh changes."
