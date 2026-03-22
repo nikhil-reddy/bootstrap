@@ -9,6 +9,7 @@ set -euo pipefail
 #   INSTALL_STARSHIP=1
 #   INSTALL_FONTS=1
 #   INSTALL_TFENV=1
+#   INSTALL_CODEX_SKILLS=1
 #   CONFIGURE_GIT=1
 #   CONFIGURE_ZSH=1
 #   CONFIGURE_STARSHIP=1
@@ -19,6 +20,7 @@ INSTALL_TERRAFORM=${INSTALL_TERRAFORM:-1}
 INSTALL_STARSHIP=${INSTALL_STARSHIP:-1}
 INSTALL_FONTS=${INSTALL_FONTS:-0}
 INSTALL_TFENV=${INSTALL_TFENV:-1}
+INSTALL_CODEX_SKILLS=${INSTALL_CODEX_SKILLS:-1}
 CONFIGURE_GIT=${CONFIGURE_GIT:-1}
 CONFIGURE_ZSH=${CONFIGURE_ZSH:-1}
 CONFIGURE_STARSHIP=${CONFIGURE_STARSHIP:-1}
@@ -300,6 +302,20 @@ error_symbol = "[❯](fg:160)"
 EOF
 }
 
+install_codex_skills() {
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local src="${script_dir}/.agents/skills"
+  local dst="$HOME/.agents/skills"
+  if [[ ! -d "$src" ]]; then
+    log "No skills found at $src"
+    return
+  fi
+  mkdir -p "$dst"
+  cp -R "$src/." "$dst/"
+  log "Installed Codex skills to $dst"
+}
+
 main() {
   if [[ "$INSTALL_TOOLS" == "1" ]]; then
     if is_macos; then
@@ -322,6 +338,10 @@ main() {
 
   if [[ "$CONFIGURE_STARSHIP" == "1" ]]; then
     configure_starship
+  fi
+
+  if [[ "$INSTALL_CODEX_SKILLS" == "1" ]]; then
+    install_codex_skills
   fi
 
   log "Done. Restart your shell to pick up zsh changes."
