@@ -73,7 +73,7 @@ install_brew() {
 install_packages_macos() {
   install_brew
 
-  local pkgs=(git zsh fzf ripgrep fd bat eza zoxide)
+  local pkgs=(git zsh fzf ripgrep fd bat eza zoxide zsh-autosuggestions zsh-syntax-highlighting)
   if [[ "$INSTALL_STARSHIP" == "1" ]]; then
     pkgs+=(starship)
   fi
@@ -103,6 +103,18 @@ install_packages_debian() {
   local pkgs=(git zsh fzf ripgrep fd-find bat eza zoxide)
   log "Installing packages via apt: ${pkgs[*]}"
   sudo apt-get install -y "${pkgs[@]}"
+
+  log "Installing zsh plugins via apt (if available)"
+  if apt-cache show zsh-autosuggestions >/dev/null 2>&1; then
+    sudo apt-get install -y zsh-autosuggestions
+  else
+    log "zsh-autosuggestions not found in apt; skipping"
+  fi
+  if apt-cache show zsh-syntax-highlighting >/dev/null 2>&1; then
+    sudo apt-get install -y zsh-syntax-highlighting
+  else
+    log "zsh-syntax-highlighting not found in apt; skipping"
+  fi
 
   if [[ "$INSTALL_STARSHIP" == "1" ]]; then
     log "Installing starship via apt (if available)"
@@ -215,6 +227,23 @@ compinit -d ~/.zsh/cache/zcompdump
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*' rehash true
+
+# Ghost text autosuggestions and syntax highlighting
+if [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Prefix search with Up/Down
 autoload -U up-line-or-beginning-search down-line-or-beginning-search
