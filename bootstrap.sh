@@ -303,7 +303,7 @@ configure_starship() {
   cat > "$cfg" <<'EOF'
 # Minimal Starship prompt config
 add_newline = false
-format = "$username$hostname$directory$git_branch$git_status$character"
+format = "$username$hostname$directory$git_branch$git_status$cmd_duration$character"
 
 [username]
 show_always = true
@@ -329,6 +329,11 @@ format = "[$symbol$branch]($style) "
 [git_status]
 style = "fg:208"
 format = "[$all_status$ahead_behind]($style) "
+
+[cmd_duration]
+min_time = 4000
+format = "[took $duration]($style) "
+style = "bold fg:244"
 
 [character]
 success_symbol = "[❯](fg:250)"
